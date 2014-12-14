@@ -1,0 +1,36 @@
+# -*- coding: utf-8 -*-
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.synced_folder ".", "/vagrant"
+
+  def define_virtualbox(c, opt = {})
+    opt[:memory] ||= 512
+    opt[:cpus]   ||= 2
+    c.vm.provider :virtualbox do |vbox|
+      vbox.customize ["modifyvm", :id, "--memory", opt[:memory]]
+      vbox.customize ["modifyvm", :id, "--cpus", opt[:cpus]]
+    end
+  end
+
+  ## apache2.2 build - centos6
+  config.vm.define :cent6_build_apache22 do |c|
+    c.vm.box      = "hfm4/centos6"
+    c.vm.hostname = "cent6-build-apache22.tnmt.dev"
+    define_virtualbox c
+    c.vm.provision :shell do |shell|
+      shell.path = "vagrant/build-apache2.2.sh"
+    end
+  end
+
+  ## apache2.2 build - centos7
+  config.vm.define :cent7_build_apache22 do |c|
+    c.vm.box      = "hfm4/centos7"
+    c.vm.hostname = "cent7-build-apache22.tnmt.dev"
+    define_virtualbox c
+    c.vm.provision :shell do |shell|
+      shell.path = "vagrant/build-apache2.2.sh"
+    end
+  end
+end
